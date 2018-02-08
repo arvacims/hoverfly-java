@@ -8,7 +8,7 @@ plugins {
     id 'jacoco'
 }
 
-group = 'io.specto'
+group = 'com.github.arvacims'
 archivesBaseName = 'hoverfly-java'
 
 sourceCompatibility = 1.8
@@ -48,14 +48,12 @@ dependencies {
 
 allprojects { subproj ->
 
-    ext."signing.keyId" = "$System.env.MAVEN_GPG_KEYNAME"
-    ext."signing.password" = "$System.env.MAVEN_GPG_PASSPHRASE"
-    ext."signing.secretKeyRingFile" = "$System.env.HOME/.gnupg/secring.gpg"
-    ext.ossrhUsername = "$System.env.MAVEN_CENTRAL_USERNAME"
-    ext.ossrhPassword = "$System.env.MAVEN_CENTRAL_PASSWORD"
+    ext.mvnRepoUrlRelease = "$System.env.MAVEN_REPO_URL_RELEASE"
+    ext.mvnRepoUrlSnapshot = "$System.env.MAVEN_REPO_URL_SNAPSHOT"
+    ext.mvnRepoUser = "$System.env.MAVEN_REPO_USERNAME"
+    ext.mvnRepoPass = "$System.env.MAVEN_REPO_PASSWORD"
 
     apply plugin: 'maven'
-    apply plugin: 'signing'
     apply plugin: 'java'
     apply plugin: 'net.researchgate.release'
 
@@ -73,29 +71,17 @@ allprojects { subproj ->
         archives javadocJar, sourcesJar
     }
 
-    def isSnapshot = project.version.contains('SNAPSHOT')
-
-    afterEvaluate {
-        if (!isSnapshot) {
-            signing {
-                sign configurations.archives
-            }
-        }
-    }
-
     afterReleaseBuild.dependsOn uploadArchives
 
     uploadArchives {
         repositories {
             mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: "$ossrhUsername", password: "$ossrhPassword")
+                repository(url: "$mvnRepoUrlRelease") {
+                    authentication(userName: "$mvnRepoUser", password: "$mvnRepoPass")
                 }
 
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: "$ossrhUsername", password: "$ossrhPassword")
+                snapshotRepository(url: "$mvnRepoUrlSnapshot") {
+                    authentication(userName: "$mvnRepoUser", password: "$mvnRepoPass")
                 }
 
                 pom.project {
@@ -103,12 +89,12 @@ allprojects { subproj ->
                     packaging 'jar'
                     // optionally artifactId can be defined here
                     description "${subproj.property('description')}"
-                    url 'https://github.com/SpectoLabs/hoverfly-java'
+                    url 'https://github.com/arvacims/hoverfly-java'
 
                     scm {
-                        connection 'scm:git:git@github.com:SpectoLabs/hoverfly-java.git'
-                        developerConnection 'scm:git:git@github.com:SpectoLabs/hoverfly-java.git'
-                        url 'git@github.com:SpectoLabs/hoverfly-java.git'
+                        connection 'scm:git:git@github.com:arvacims/hoverfly-java.git'
+                        developerConnection 'scm:git:git@github.com:arvacims/hoverfly-java.git'
+                        url 'git@github.com:arvacims/hoverfly-java.git'
                     }
 
                     licenses {
