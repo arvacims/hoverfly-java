@@ -8,6 +8,17 @@ image:https://img.shields.io/maven-central/v/io.specto/hoverfly-java.svg["Maven 
 A Java native language binding for http://hoverfly.io/[Hoverfly^], a Go proxy which allows you to simulate http services in your unit tests. Another term
 for this is https://en.wikipedia.org/wiki/Service_virtualization[Service Virtualisation^].
 
+== Fork Notes ("arvacims")
+
+As long as our pull requests are not yet accepted and officially released, use the following commands to deploy the snapshot artifacts to our Maven repository.
+```
+export MAVEN_REPO_URL_RELEASE='https://.../artifactory/ext-release-local'
+export MAVEN_REPO_URL_SNAPSHOT='https://.../artifactory/ext-snapshot-local'
+export MAVEN_REPO_USERNAME='...'
+export MAVEN_REPO_PASSWORD='...'
+gradle clean build uploadArchives
+```
+
 == Features
 
 - Simulation of http/https services
